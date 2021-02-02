@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<bindings version="2.1" xmlns="http://java.sun.com/xml/ns/jaxb" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:hi="urn:havis:tools:jaxb:interface" xmlns:hc="urn:havis:tools:jaxb:constructor" xmlns:clone="urn:havis:tools:jaxb:clone" xmlns:annox="http://annox.dev.java.net" xmlns:ci="http://jaxb.dev.java.net/plugin/code-injector" extensionBindingPrefixes="hi hc clone annox ci">
+
+	<bindings schemaLocation="../xsd/Configuration.xsd">
+
+		<bindings node="/xs:schema/xs:complexType[@name='Configuration']">
+			<annox:annotateClass>@javax.xml.bind.annotation.XmlSeeAlso({AntennaProperties.class,AntennaConfiguration.class,KeepAliveConfiguration.class})</annox:annotateClass>
+			<annox:annotate>
+				<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes">
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type">AntennaProperties</annox:annotate>
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type">AntennaConfiguration</annox:annotate>
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type">KeepAliveConfiguration</annox:annotate>
+				</annox:annotate>
+			</annox:annotate>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:element[@name='RFConfiguration']/xs:complexType">
+			<clone:clone>deviceCapabilities, regulatoryCapabilities, antennaConfigurationList, keepAliveConfiguration, inventorySettings</clone:clone>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='AntennaConfiguration']">
+			<clone:clone />
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='AntennaProperties']">
+			<clone:clone />
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='KeepAliveConfiguration']">
+			<clone:clone />
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='AntennaPropertyList']">
+			<ci:code>public void setEntryList(List&lt;AntennaProperties&gt; entryList) { this.entryList = entryList; }</ci:code>
+			<clone:clone />
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='AntennaConfigurationList']">
+			<ci:code>public void setEntryList(List&lt;AntennaConfiguration&gt; entryList) { this.entryList = entryList; }</ci:code>
+			<clone:clone>entryList</clone:clone>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='InventorySettings']">
+			<clone:clone>selectionMasks, singulationControl, rssiFilter, tagSmoothingSettings</clone:clone>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='SelectionMask']">
+			<clone:clone />
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='RssiFilter']">
+			<clone:clone />
+		</bindings>
+		
+		<bindings node="/xs:schema/xs:complexType[@name='TagSmoothingSettings']">
+			<hc:constructor default="true">Integer glimpsedTimeout, Integer observedCountThreshold, Integer observedTimeThreshold, Integer lostTimeout</hc:constructor>
+			<clone:clone />
+		</bindings>
+		
+		<bindings node="/xs:schema/xs:complexType[@name='SingulationControl']">
+			<clone:clone />
+		</bindings>
+	</bindings>
+
+</bindings>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:havis:device:rf:xsd:1" xmlns="urn:havis:device:rf:xsd:1" elementFormDefault="qualified">
+
+	<xs:include schemaLocation="OperationResult.xsd" />
+
+	<xs:element name="TagData" type="TagData" />
+	<xs:element name="Filter" type="Filter" />
+	<xs:element name="TagDataList" type="TagDataList" />
+
+	<xs:complexType name="Filter">
+		<xs:sequence>
+			<xs:element name="bank" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>
+						A number representing the memory bank. (0 = Password, 1 = EPC, 2 = TID, 4 = User Memory)
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="bitOffset" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>
+						The offset as number of bits.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="bitLength" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>
+						The length of the Filter and thus the relevant bits of the data array.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="data" type="xs:hexBinary">
+				<xs:annotation>
+					<xs:documentation>
+						An array of bytes representing the Filter data.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="mask" type="xs:hexBinary">
+				<xs:annotation>
+					<xs:documentation>
+						An array of bytes representing the Filter mask.
+						The mask defines which bits of data are relevant.
+						Each bit of the mask being set to 1 defines the
+						corresponding bit in the data array as relevant.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="match" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>
+						Indicates whether the Filter is interpreted as inclusive or exclusive.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TagData">
+		<xs:sequence>
+			<xs:element name="TagDataId" type="xs:long">
+				<xs:annotation>
+					<xs:documentation>
+						An identifier for the tag data which is unique for one inventory.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="epc" type="xs:hexBinary">
+				<xs:annotation>
+					<xs:documentation>
+						The transponder's EPC as array of bytes.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="pc" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>
+						The transponder's protocol control (PC) as numeric value.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="crc" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>
+						The transponder's CRC as numeric value.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="xpc" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>
+						The transponder's extended protocol control (XPC) as numeric value.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="antennaID" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>
+						The ID of the antenna that detected the transponder.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="rssi" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>
+						The transponder's maximum receive signal strength ranging from -128 to 127.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="channel" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>
+						The index of the fixed frequency table entry representing frequency in use.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="resultList" type="OperationResult" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						A list of tag operation results.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TagDataList">
+		<xs:sequence>
+			<xs:element name="entryList" type="TagData" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						A list of tag data objects.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:havis:device:rf:xsd:1" xmlns="urn:havis:device:rf:xsd:1" elementFormDefault="qualified">
+
+	<xs:include schemaLocation="Capabilities.xsd" />
+
+	<xs:element name="AntennaPropertyList" type="AntennaPropertyList" />
+	<xs:element name="AntennaProperties" type="AntennaProperties" />
+	<xs:element name="AntennaConfigurationList" type="AntennaConfigurationList" />
+	<xs:element name="AntennaConfiguration" type="AntennaConfiguration" />
+	<xs:element name="KeepAliveConfiguration" type="KeepAliveConfiguration" />
+	<xs:element name="SelectionMask" type="SelectionMask" />
+	<xs:element name="SingulationControl" type="SingulationControl" />
+	<xs:element name="RssiFilter" type="RssiFilter" />
+
+	<xs:complexType name="Configuration" abstract="true" />
+
+	<xs:complexType name="AntennaPropertyList">
+		<xs:sequence>
+			<xs:element name="entryList" type="AntennaProperties" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						A list of entries.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="AntennaProperties">
+		<xs:complexContent>
+			<xs:extension base="Configuration">
+				<xs:sequence>
+					<xs:element name="id" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								The ID of the antenna outlet.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="gain" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								The amplification of the antenna in dBi * 100.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="connected" type="xs:boolean">
+						<xs:annotation>
+							<xs:documentation>
+								Indicator if an antenna is connected to the outlet.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AntennaConfigurationList">
+		<xs:sequence>
+			<xs:element name="entryList" type="AntennaConfiguration" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						A list of entries.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="ConnectType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="TRUE" />
+			<xs:enumeration value="FALSE" />
+			<xs:enumeration value="AUTO" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="AntennaConfiguration">
+		<xs:complexContent>
+			<xs:extension base="Configuration">
+				<xs:sequence>
+					<xs:element name="id" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								The ID of the antenna outlet.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="receiveSensitivity" type="xs:short" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								The receive sensitivity as index of the entry in the receive sensitivity table of the device capabilities.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="transmitPower" type="xs:short" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								The transmit power as index of the entry in the transmit power table of the device capabilities.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="hopTableID" type="xs:short" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								The frequency hop table as index of the entry in the frequency hop table list of the device capabilities.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="channelIndex" type="xs:short" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								The channel as index of the entry in the fixed frequency table of the device capabilities.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="connect" type="ConnectType" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>
+								Indicator if antenna's connectivity is to be detected automatically or forced to be true or false.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="KeepAliveConfiguration">
+		<xs:complexContent>
+			<xs:extension base="Configuration">
+				<xs:sequence>
+					<xs:element name="enable" type="xs:boolean">
+						<xs:annotation>
+							<xs:documentation>
+								Indicates whether keep-alive is active or not.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="interval" type="xs:int">
+						<xs:annotation>
+							<xs:documentation>
+								Specifies the interval of the keep-alive event (in milliseconds).
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="InventorySettings">
+		<xs:complexContent>
+			<xs:extension base="Configuration">
+				<xs:sequence>
+					<xs:element name="selectionMasks" type="SelectionMask" maxOccurs="unbounded" />
+					<xs:element name="singulationControl" type="SingulationControl" />
+					<xs:element name="rssiFilter" type="RssiFilter" />
+					<xs:element name="tagSmoothing" type="TagSmoothingSettings" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="SingulationControl">
+		<xs:sequence>
+			<xs:element name="session" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>
+						The inventory session. Valid values: 0..3			
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="qValue" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>
+						The expected number of tags in the antenna field (q-Value).
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="transitTime" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>
+						The expected time in milliseconds a tag remains within the antenna field.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="rounds" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>
+						The number of inventory rounds.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="RssiFilter">
+		<xs:sequence>
+			<xs:element name="minRssi" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>
+						The minimum RSSI value. Valid values: -128..+127						
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="maxRssi" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>
+						The maximum RSSI value. Valid values: -128..+127						
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>			
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="TagSmoothingSettings">
+		<xs:sequence>
+			<xs:element name="enabled" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>
+						The state of use of the algorithm	
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="glimpsedTimeout" type="xs:int" nillable="true">
+				<xs:annotation>
+					<xs:documentation>
+						The glimpsed timeout of the tag smoothing algorithm in ms					
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="observedCountThreshold" type="xs:int" nillable="true">
+				<xs:annotation>
+					<xs:documentation>
+						The observedCount threshold of the tag smoothing algorithm in equal unique tags					
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>	
+			<xs:element name="observedTimeThreshold" type="xs:int" nillable="true">
+				<xs:annotation>
+					<xs:documentation>
+						The observedTime threshold of the tag smoothing algorithm in ms					
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="lostTimeout" type="xs:int" nillable="true">
+				<xs:annotation>
+					<xs:documentation>
+						The lost timeout of the tag smoothing algorithm in ms					
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>		
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="SelectionMask">
+		<xs:sequence>
+			<xs:element name="bank" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>
+						The memory bank. Valid values: 0..3
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="bitOffset" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>
+						The selection mask offset.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="bitLength" type="xs:short">
+				<xs:annotation>
+					<xs:documentation>
+						The selection mask length.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="mask" type="xs:hexBinary">
+				<xs:annotation>
+					<xs:documentation>
+						The selection mask data.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>			
+		</xs:sequence>		
+	</xs:complexType>
+
+	<xs:simpleType name="ConfigurationType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ALL" />
+			<xs:enumeration value="ANTENNA_PROPERTIES" />
+			<xs:enumeration value="ANTENNA_CONFIGURATION" />
+			<xs:enumeration value="KEEP_ALIVE_CONFIGURATION" />
+			<xs:enumeration value="INVENTORY_SETTINGS" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="RFConfiguration">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="region" type="xs:string" nillable="true" />
+
+				<xs:element name="deviceCapabilities" type="DeviceCapabilities" nillable="false">
+					<xs:annotation>
+						<xs:documentation>
+							The device capabilities.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="regulatoryCapabilities" type="RegulatoryCapabilities" nillable="false">
+					<xs:annotation>
+						<xs:documentation>
+							The regulatory capabilities.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="antennaConfigurationList" type="AntennaConfigurationList" nillable="false">
+					<xs:annotation>
+						<xs:documentation>
+							The antenna configurations.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="keepAliveConfiguration" type="KeepAliveConfiguration" nillable="false">
+					<xs:annotation>
+						<xs:documentation>
+							The keep-alive configuration.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="inventorySettings" type="InventorySettings" nillable="false">
+					<xs:annotation>
+						<xs:documentation>
+							The inventory settings.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="RFRegion">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="id" type="xs:string" nillable="false">
+					<xs:annotation>
+						<xs:documentation>
+							The unique ID of the RFC region.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="regulatoryCapabilities" type="RegulatoryCapabilities" nillable="false">
+					<xs:annotation>
+						<xs:documentation>
+							The regulatory capabilities of this region.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:simpleType name="GPIOState">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LOW">
+				<xs:annotation>
+					<xs:documentation>State is low.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="HIGH">
+				<xs:annotation>
+					<xs:documentation>State is high.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="UNKNOWN">
+				<xs:annotation>
+					<xs:documentation>State is unknown. Invalid for GPOState().</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="GPOState">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="Configuration">
+					<xs:sequence>
+						<xs:element name="portID" type="xs:short">
+							<xs:annotation>
+								<xs:documentation>
+									Represents the GPIO port.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="state" type="GPIOState">
+							<xs:annotation>
+								<xs:documentation>
+									Represents the GPIO state of the port.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="GPIState">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="Configuration">
+					<xs:sequence>
+						<xs:element name="portID" type="xs:short">
+							<xs:annotation>
+								<xs:documentation>
+									Represents the GPIO port.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="state" type="GPIOState">
+							<xs:annotation>
+								<xs:documentation>
+									Represents the GPIO state of the port.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+<project name="havis.device.rf-api" default="publish" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+	<property file="${basedir}/build.properties" />
+	<property name="basename" value="${ant.project.name}" />
+	<property name="build.dir" location="${basedir}/target" />
+	<property name="build.dir.classes" location="${build.dir}/classes" />
+	<property name="build.dir.jibx" value="${build.dir}/jibx" />
+	<property name="build.dir.jibx.src" value="${build.dir.jibx}/src" />
+	<property name="build.dir.jibx.classes" value="${build.dir.jibx}/classes" />
+	<property name="doc.dir" location="${build.dir}/doc" />
+	<property name="lib.dir" location="${basedir}/lib" />
+	<property name="resources.dir" location="${basedir}/src/main/resources" />
+	<property name="resources.dir.xsd" location="${resources.dir}/xsd" />
+	<property name="src.dir" location="${basedir}/src/main/java" />
+
+	<property file="${resources.dir}/build.properties" />
+	<property file="${resources.dir}/MANIFEST.MF" prefix="manifest" />
+
+	<property name="javac.version" value="8" />
+
+	<path id="build.classpath">
+		<fileset dir="${lib.dir}" />
+	</path>
+
+	<target name="clean-cache" description="Cleans ivy cache">
+		<ivy:cleancache />
+	</target>
+
+	<target name="clean" description="Cleans the project">
+		<delete dir="${lib.dir}" />
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="clean-all" depends="clean, clean-cache" description="Cleans the project and ivy cache" />
+
+	<target name="check.build.properties">
+		<condition property="ivy.resolver" else="local">
+			<isset property="ivy.resolver" />
+		</condition>
+		<fail message="Missing property 'api.url'. Does 'build.properties' file exists?" unless="api.url" />
+		<fail message="Missing property 'ivy.url'. Does 'build.properties' file exists?" unless="ivy.url" />
+	</target>
+
+	<target name="retrieve" depends="check.build.properties" description="">
+		<ivy:retrieve log="quiet" />
+	</target>
+
+	<macrodef name="xjc">
+		<attribute name="name" />
+		<attribute name="package" />
+		<attribute name="catalog" default="" />
+		<element name="bindings" optional="true" implicit="true" />
+		<sequential>
+			<mkdir dir="${build.dir}/jaxb/binding" />
+			<mkdir dir="${build.dir}/jaxb/src" />
+			<taskdef name="xjc2" classname="com.sun.tools.xjc.XJC2Task" classpathref="build.classpath" />
+			<xjc2 schema="${resources.dir.xsd}/@{name}.xsd" destdir="${build.dir}/jaxb/src" package="@{package}" extension="true">
+				<arg value="-npa" />
+				<arg value="-Xinterface" />
+				<arg value="-Xconstructor" />
+				<arg value="-Xclone" />
+				<arg value="-Xinject-code" />
+				<arg value="-Xannotate" />
+				<arg value="-verbose" />
+				<arg value="-episode" />
+				<arg value="${build.dir}/jaxb/binding/@{name}_xml" />
+				<bindings />
+			</xjc2>
+			<xslt style="${resources.dir}/style.xsl" in="${build.dir}/jaxb/binding/@{name}_xml" out="${build.dir}/jaxb/binding/@{name}.xml">
+				<param name="filename" expression="${resources.dir.xsd}/@{name}.xsd" type="STRING" />
+			</xslt>
+			<delete file="${build.dir}/jaxb/binding/@{name}_xml" />
+		</sequential>
+	</macrodef>
+
+	<target name="TagOperation">
+		<xjc name="TagOperation" package="havis.device.rf.tag.operation">
+			<binding dir="${resources.dir}" includes="binding/TagOperation.xml" />
+		</xjc>
+	</target>
+
+	<target name="OperationResult">
+		<xjc name="OperationResult" package="havis.device.rf.tag.result">
+			<binding dir="${resources.dir}" includes="binding/OperationResult.xml" />
+		</xjc>
+	</target>
+
+	<target name="Tag">
+		<xjc name="Tag" package="havis.device.rf.tag">
+			<binding dir="${resources.dir}" includes="binding/Tag.xml" />
+			<binding dir="${build.dir}/jaxb/binding/" includes="OperationResult.xml" />
+		</xjc>
+	</target>
+
+	<target name="Capabilities">
+		<xjc name="Capabilities" package="havis.device.rf.capabilities">
+			<binding dir="${resources.dir}" includes="binding/Capabilities.xml" />
+		</xjc>
+	</target>
+
+	<target name="Configuration">
+		<xjc name="Configuration" package="havis.device.rf.configuration">
+			<binding dir="${resources.dir}" includes="binding/Configuration.xml" />
+			<binding dir="${build.dir}/jaxb/binding/" includes="Capabilities.xml" />
+		</xjc>
+	</target>
+
+	<target name="jaxb" depends="retrieve, TagOperation, OperationResult, Tag, Capabilities, Configuration">
+		<mkdir dir="${build.dir}/jaxb/classes" />
+		<javac srcdir="${build.dir}/jaxb/src" destdir="${build.dir}/jaxb/classes" release="${javac.version}" debug="${javac.debug}" includeantruntime="false">
+			<classpath>
+				<path refid="build.classpath" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="compile" depends="jaxb">
+		<mkdir dir="${build.dir.classes}" />
+		<javac srcdir="${src.dir}" destdir="${build.dir.classes}" release="${javac.version}" debug="${javac.debug}" includeantruntime="false">
+			<classpath>
+				<path refid="build.classpath" />
+				<pathelement location="${build.dir}/jaxb/classes" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile" description="Builds a JAR file from the project.">
+		<!-- create JAR -->
+		<jar jarfile="${build.dir}/${basename}.jar" update="true" manifest="${resources.dir}/MANIFEST.MF">
+			<fileset dir="${build.dir.classes}" />
+			<fileset dir="${build.dir}/jaxb/classes" />
+		</jar>
+	</target>
+
+	<target name="jar-src" depends="jar" description="Builds JAR file containing the sources generated by JiBX.">
+		<!-- create sources JAR -->
+		<jar jarfile="${build.dir}/${basename}-sources.jar" update="true">
+			<fileset dir="${src.dir}" />
+			<fileset dir="${build.dir}/jaxb/src" />
+		</jar>
+	</target>
+
+	<target name="jar-doc" description="Creates a javadoc JAR of the implemented and generated classes">
+		<!-- create javadoc JAR -->
+		<javadoc destdir="${doc.dir}" author="true" version="true" use="true" windowtitle="${javadoc.windowtitle}" doctitle="${javadoc.doctitle}" bottom="${javadoc.buttom}">
+			<packageset dir="${src.dir}" />
+			<packageset dir="${build.dir}/jaxb/src" />
+			<classpath>
+				<path refid="build.classpath" />
+				<pathelement location="${build.dir}/jaxb/classes" />
+			</classpath>
+			<group title="Packages" packages="havis.devive.rf.*" />
+			<link offline="true" href="http://docs.oracle.com/javase/7/docs/api/" packagelistURL="${api.url}/javase/7/" />
+		</javadoc>
+		<jar jarfile="${build.dir}/${basename}-javadoc.jar" update="true" basedir="${doc.dir}" />
+	</target>
+
+	<target name="publish" depends="jar, jar-src, jar-doc" description="Publishes the JAR file(s) to the local Ivy repository.">
+		<ivy:resolve file="${resources.dir}/ivy.xml" log="download-only" />
+
+		<ivy:publish resolver="${ivy.resolver}" pubrevision="${manifest.Bundle-Version}" status="integration" overwrite="true">
+			<artifacts pattern="${build.dir}/[artifact].[ext]" />
+		</ivy:publish>
+	</target>
+</project>

@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:havis:device:rf:xsd:1" xmlns="urn:havis:device:rf:xsd:1" elementFormDefault="qualified">
+
+	<xs:complexType name="Capabilities" abstract="true" />
+
+	<xs:element name="DeviceCapabilities" type="DeviceCapabilities" />
+	<xs:element name="RegulatoryCapabilities" type="RegulatoryCapabilities" />
+	<xs:element name="FreqHopTable" type="FreqHopTable" />
+	<xs:element name="FreqHopTableEntry" type="FreqHopTableEntry" />
+	<xs:element name="FixedFreqTable" type="FixedFreqTable" />
+	<xs:element name="TransmitPowerTable" type="TransmitPowerTable" />
+	<xs:element name="TransmitPowerTableEntry" type="TransmitPowerTableEntry" />
+	<xs:element name="ReceiveSensitivityTable" type="ReceiveSensitivityTable" />
+	<xs:element name="ReceiveSensitivityTableEntry" type="ReceiveSensitivityTableEntry" />
+	<xs:element name="AntennaReceiveSensitivityRangeTable" type="AntennaReceiveSensitivityRangeTable" />
+	<xs:element name="AntennaReceiveSensitivityRangeTableEntry" type="AntennaReceiveSensitivityRangeTableEntry" />
+
+	<xs:complexType name="DeviceCapabilities">
+		<xs:complexContent>
+			<xs:extension base="Capabilities">
+				<xs:sequence>
+					<xs:element name="manufacturer" type="xs:int">
+						<xs:annotation>
+							<xs:documentation>
+								The manufacturer as IANA private enterprise number (PEN).
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="model" type="xs:int">
+						<xs:annotation>
+							<xs:documentation>
+								The model designation as integer.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="firmware" type="xs:string" nillable="false">
+						<xs:annotation>
+							<xs:documentation>
+								The firmware version as UTF-8 string (max length: 255 chars).
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="numberOfAntennas" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								The maximum number of antennas.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="maxReceiveSensitivity" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								The maximum receive sensitivity in dBm.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="receiveSensitivityTable" type="ReceiveSensitivityTable" nillable="true">
+						<xs:annotation>
+							<xs:documentation>
+								A collection of supported values for the receive sensitivity.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="antennaReceiveSensitivityRangeTable" type="AntennaReceiveSensitivityRangeTable" nillable="true">
+						<xs:annotation>
+							<xs:documentation>
+								A collection containing ranges for the receive sensitivity per antenna outlet.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="RegulatoryCapabilities">
+		<xs:complexContent>
+			<xs:extension base="Capabilities">
+				<xs:sequence>
+					<xs:element name="countryCode" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								The numeric country code (ISO 3166).
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="communicationStandard" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								The communication standard according to LLRP chapter 10.2.4.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="transmitPowerTable" type="TransmitPowerTable" nillable="true">
+						<xs:annotation>
+							<xs:documentation>
+								A collection containing supported transmit powers.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="hopping" type="xs:boolean">
+						<xs:annotation>
+							<xs:documentation>
+								An indication if frequency hops are required in this region.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="freqHopTable" type="FreqHopTable" nillable="true">
+						<xs:annotation>
+							<xs:documentation>
+								A collection of valid frequency hop lists.
+								The index values of the entries of these lists represent the corresponding channels (1-based index).
+								Collection is empty if hopping = false.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="fixedFreqTable" type="FixedFreqTable" nillable="true">
+						<xs:annotation>
+							<xs:documentation>
+								A collection containing the valid frequencies in kHz.
+								The index values of the entries of these lists represent the corresponding channels (1-based index).
+								Collection is empty if hopping = false.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="IndexedEntry" abstract="true">
+		<xs:attribute name="index" type="xs:short" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					A numeric index value to uniquely identify an indexed entry.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="FreqHopTable">
+		<xs:sequence>
+			<xs:element name="entryList" type="FreqHopTableEntry" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						A list of entries.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="FreqHopTableEntry">
+		<xs:complexContent>
+			<xs:extension base="IndexedEntry">
+				<xs:sequence>
+					<xs:element name="freqList" type="xs:int" maxOccurs="unbounded" nillable="false">
+						<xs:annotation>
+							<xs:documentation>
+								A list of frequencies in kHz.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="FixedFreqTable">
+		<xs:sequence>
+			<xs:element name="freqList" type="xs:int" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						A list of entries.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TransmitPowerTable">
+		<xs:sequence>
+			<xs:element name="entryList" type="TransmitPowerTableEntry" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						A list of entries.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="TransmitPowerTableEntry">
+		<xs:complexContent>
+			<xs:extension base="IndexedEntry">
+				<xs:sequence>
+					<xs:element name="transmitPower" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								The transmit power in dbM * 100.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ReceiveSensitivityTable">
+		<xs:sequence>
+			<xs:element name="entryList" type="ReceiveSensitivityTableEntry" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						A list of entries.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ReceiveSensitivityTableEntry">
+		<xs:complexContent>
+			<xs:extension base="IndexedEntry">
+				<xs:sequence>
+					<xs:element name="receiveSensitivity" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								The receive sensitivity in dB.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AntennaReceiveSensitivityRangeTable">
+		<xs:sequence>
+			<xs:element name="entryList" type="AntennaReceiveSensitivityRangeTableEntry" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						A list of entries.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="AntennaReceiveSensitivityRangeTableEntry">
+		<xs:complexContent>
+			<xs:extension base="IndexedEntry">
+				<xs:sequence>
+					<xs:element name="min" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								A minimum value for the antenna receive sensitivity.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="max" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								A maximum value for the antenna receive sensitivity.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="CapabilityType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ALL" />
+			<xs:enumeration value="DEVICE_CAPABILITIES" />
+			<xs:enumeration value="REGULATORY_CAPABILITIES" />
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

@@ -1,0 +1,16 @@
+Bundle-Name: Ha-VIS Device RF API
+Bundle-SymbolicName: havis.device.rf-api
+Bundle-Version: 2.6.0
+Implementation-Version: 2.6
+Bundle-ManifestVersion: 2
+Bundle-Vendor: HARTING IT_SD
+Import-Package: 
+ com.fasterxml.jackson.annotation;resolution:=optional
+Export-Package: 
+ havis.device.rf,
+ havis.device.rf.capabilities,
+ havis.device.rf.configuration,
+ havis.device.rf.exception,
+ havis.device.rf.tag,
+ havis.device.rf.tag.operation,
+ havis.device.rf.tag.result

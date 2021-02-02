@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<bindings version="2.1" xmlns="http://java.sun.com/xml/ns/jaxb" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:hi="urn:havis:tools:jaxb:interface" xmlns:hc="urn:havis:tools:jaxb:constructor" xmlns:annox="http://annox.dev.java.net" xmlns:ci="http://jaxb.dev.java.net/plugin/code-injector" extensionBindingPrefixes="hi hc annox ci">
+
+	<bindings schemaLocation="../xsd/Tag.xsd">
+
+		<bindings node="/xs:schema/xs:complexType[@name='Filter']">
+			<hc:constructor default="true">short bank, short bitOffset, short bitLength, byte[] data, byte[] mask, boolean match</hc:constructor>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='TagData']">
+			<ci:code>public void setResultList(List&lt;OperationResult&gt; resultList) { this.resultList = resultList; }</ci:code>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='TagDataList']">
+			<ci:code>public void setEntryList(List&lt;TagData&gt; entryList) { this.entryList = entryList; }</ci:code>
+		</bindings>
+
+	</bindings>
+
+</bindings>

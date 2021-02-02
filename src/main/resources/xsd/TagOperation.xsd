@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:havis:device:rf:xsd:1" xmlns="urn:havis:device:rf:xsd:1" elementFormDefault="qualified">
+
+	<xs:element name="ReadOperation" type="ReadOperation" />
+	<xs:element name="WriteOperation" type="WriteOperation" />
+	<xs:element name="KillOperation" type="KillOperation" />
+	<xs:element name="LockOperation" type="LockOperation" />
+	<xs:element name="RequestOperation" type="RequestOperation" />
+	<xs:element name="CustomOperation" type="CustomOperation" />
+	<xs:element name="OperationList" type="OperationList" />
+
+	<xs:complexType name="TagOperation" abstract="true">
+		<xs:sequence>
+			<xs:element name="operationId" type="xs:string" nillable="true">
+				<xs:annotation>
+					<xs:documentation>
+						An alpha-numeric ID that will reappear in the result belonging to this operation.
+						This ID forms a logical reference between the operation and its result.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="OperationList">
+		<xs:sequence>
+			<xs:element name="entry" type="TagOperation" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						A list of tag operation objects.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ReadOperation">
+		<xs:complexContent>
+			<xs:extension base="TagOperation">
+				<xs:sequence>
+					<xs:element name="bank" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								The number of the memory bank. (0 = Password, 1 = EPC, 2 = TID, 4 = User Memory)
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="offset" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								The offset as number of 16-bit words.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="length" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								The number of 16-bit words to be read by this reading operation.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="password" type="xs:int">
+						<xs:annotation>
+							<xs:documentation>
+								The access password for the reading operation (or 0 for an empty password).
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="WriteOperation">
+		<xs:complexContent>
+			<xs:extension base="TagOperation">
+				<xs:sequence>
+					<xs:element name="bank" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								The number of the memory bank. (0 = Password, 1 = EPC, 2 = TID, 4 = User Memory)
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="offset" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								The offset as number of 16-bit words.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="data" type="xs:hexBinary">
+						<xs:annotation>
+							<xs:documentation>
+								The data as 16-bit words to be written by this write operation.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="password" type="xs:int">
+						<xs:annotation>
+							<xs:documentation>
+								The access password for the write operation (or 0 for an empty password).
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="KillOperation">
+		<xs:complexContent>
+			<xs:extension base="TagOperation">
+				<xs:sequence>
+					<xs:element name="killPassword" type="xs:int">
+						<xs:annotation>
+							<xs:documentation>
+								The kill password for the kill operation.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="LockOperation">
+		<xs:complexContent>
+			<xs:extension base="TagOperation">
+				<xs:sequence>
+					<xs:element name="privilege">
+						<xs:simpleType>
+							<xs:annotation>
+								<xs:documentation>
+									The access privilege to be applied.
+								</xs:documentation>
+							</xs:annotation>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="LOCK" />
+								<xs:enumeration value="PERMALOCK" />
+								<xs:enumeration value="PERMAUNLOCK" />
+								<xs:enumeration value="UNLOCK" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="field">
+						<xs:simpleType>
+							<xs:annotation>
+								<xs:documentation>
+									The field which the access privilege will be applied to.
+								</xs:documentation>
+							</xs:annotation>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="KILL_PASSWORD" />
+								<xs:enumeration value="ACCESS_PASSWORD" />
+								<xs:enumeration value="EPC_MEMORY" />
+								<xs:enumeration value="TID_MEMORY" />
+								<xs:enumeration value="USER_MEMORY" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="password" type="xs:int">
+						<xs:annotation>
+							<xs:documentation>
+								The access password for this lock operation (or 0 for an empty password).
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="CustomOperation">
+		<xs:complexContent>
+			<xs:extension base="TagOperation">
+				<xs:sequence>
+					<xs:element name="length" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								The number of most-significant bits (MSB) from the data array to be used for the custom command.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="data" type="xs:hexBinary">
+						<xs:annotation>
+							<xs:documentation>
+								The input data for the custom command.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="password" type="xs:int">
+						<xs:annotation>
+							<xs:documentation>
+								The password for the custom command (or 0 for an empty password).
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="RequestOperation">
+		<xs:complexContent>
+			<xs:extension base="TagOperation" />
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

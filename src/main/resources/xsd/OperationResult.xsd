@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:havis:device:rf:xsd:1" xmlns="urn:havis:device:rf:xsd:1" elementFormDefault="qualified">
+
+	<xs:element name="ReadResult" type="ReadResult" />
+	<xs:element name="WriteResult" type="WriteResult" />
+	<xs:element name="KillResult" type="KillResult" />
+	<xs:element name="LockResult" type="LockResult" />
+	<xs:element name="RequestResult" type="RequestResult" />
+	<xs:element name="CustomResult" type="CustomResult" />
+
+	<xs:complexType name="OperationResult" abstract="true">
+		<xs:sequence>
+			<xs:element name="operationId" type="xs:string" nillable="true">
+				<xs:annotation>
+					<xs:documentation>
+						An alpha-numeric ID that will have the same value as the ID of the tag operation this result belongs to
+						as long as such an ID has been set on the operation. This ID forms a logical reference between the operation
+						and its result.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="ReadResult">
+		<xs:complexContent>
+			<xs:extension base="OperationResult">
+				<xs:sequence>
+					<xs:element name="readData" type="xs:hexBinary">
+						<xs:annotation>
+							<xs:documentation>
+								The data resulting from the read operation (in 16-bit words).This data will be empty unless the result code equals 0.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="result">
+						<xs:annotation>
+							<xs:documentation>
+								The result code of the read operation.
+							</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="SUCCESS" />
+								<xs:enumeration value="NON_SPECIFIC_TAG_ERROR" />
+								<xs:enumeration value="NO_RESPONSE_FROM_TAG" />
+								<xs:enumeration value="NON_SPECIFIC_READER_ERROR" />
+								<xs:enumeration value="MEMORY_OVERRUN_ERROR" />
+								<xs:enumeration value="MEMORY_LOCKED_ERROR" />
+								<xs:enumeration value="INCORRECT_PASSWORD_ERROR" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="WriteResult">
+		<xs:complexContent>
+			<xs:extension base="OperationResult">
+				<xs:sequence>
+					<xs:element name="wordsWritten" type="xs:short">
+						<xs:annotation>
+							<xs:documentation>
+								The number of 16-bit words having been written.
+								If this number is not equal to the length of data then result will be != 0.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="result">
+						<xs:annotation>
+							<xs:documentation>
+								The result code of the write operation.
+							</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="SUCCESS" />
+								<xs:enumeration value="MEMORY_OVERRUN_ERROR" />
+								<xs:enumeration value="MEMORY_LOCKED_ERROR" />
+								<xs:enumeration value="INSUFFICIENT_POWER" />
+								<xs:enumeration value="NON_SPECIFIC_TAG_ERROR" />
+								<xs:enumeration value="NO_RESPONSE_FROM_TAG" />
+								<xs:enumeration value="NON_SPECIFIC_READER_ERROR" />
+								<xs:enumeration value="INCORRECT_PASSWORD_ERROR" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="KillResult">
+		<xs:complexContent>
+			<xs:extension base="OperationResult">
+				<xs:sequence>
+					<xs:element name="result">
+						<xs:annotation>
+							<xs:documentation>
+								The result code of the kill operation.
+							</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="SUCCESS" />
+								<xs:enumeration value="ZERO_KILL_PASSWORD_ERROR" />
+								<xs:enumeration value="INSUFFICIENT_POWER" />
+								<xs:enumeration value="NON_SPECIFIC_TAG_ERROR" />
+								<xs:enumeration value="NO_RESPONSE_FROM_TAG" />
+								<xs:enumeration value="NON_SPECIFIC_READER_ERROR" />
+								<xs:enumeration value="INCORRECT_PASSWORD_ERROR" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="LockResult">
+		<xs:complexContent>
+			<xs:extension base="OperationResult">
+				<xs:sequence>
+					<xs:element name="result">
+						<xs:annotation>
+							<xs:documentation>
+								The result code of the lock operation.
+							</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="SUCCESS" />
+								<xs:enumeration value="INSUFFICIENT_POWER" />
+								<xs:enumeration value="NON_SPECIFIC_TAG_ERROR" />
+								<xs:enumeration value="NO_RESPONSE_FROM_TAG" />
+								<xs:enumeration value="NON_SPECIFIC_READER_ERROR" />
+								<xs:enumeration value="INCORRECT_PASSWORD_ERROR" />
+								<xs:enumeration value="MEMORY_OVERRUN_ERROR" />
+								<xs:enumeration value="MEMORY_LOCKED_ERROR" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="CustomResult">
+		<xs:complexContent>
+			<xs:extension base="OperationResult">
+				<xs:sequence>
+					<xs:element name="resultData" type="xs:hexBinary">
+						<xs:annotation>
+							<xs:documentation>
+								The data resulting from the custom command. This data will be empty unless the result code equals 0.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="result">
+						<xs:annotation>
+							<xs:documentation>
+								The result code of the custom command.
+							</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="SUCCESS" />
+								<xs:enumeration value="MEMORY_OVERRUN_ERROR" />
+								<xs:enumeration value="MEMORY_LOCKED_ERROR" />
+								<xs:enumeration value="INSUFFICIENT_POWER" />
+								<xs:enumeration value="NON_SPECIFIC_TAG_ERROR" />
+								<xs:enumeration value="NO_RESPONSE_FROM_TAG" />
+								<xs:enumeration value="NON_SPECIFIC_READER_ERROR" />
+								<xs:enumeration value="INCORRECT_PASSWORD_ERROR" />
+								<xs:enumeration value="OP_NOT_POSSIBLE_ERROR" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="RequestResult">
+		<xs:sequence>
+			<xs:element name="results" type="OperationResult" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						A list of operation results, on for each request operation that has been called.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+</xs:schema>

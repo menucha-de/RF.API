@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<bindings version="2.1" xmlns="http://java.sun.com/xml/ns/jaxb" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:hi="urn:havis:tools:jaxb:interface" xmlns:hc="urn:havis:tools:jaxb:constructor" xmlns:annox="http://annox.dev.java.net" extensionBindingPrefixes="hi hc annox">
+
+	<bindings schemaLocation="../xsd/TagOperation.xsd">
+
+		<bindings node="/xs:schema/xs:complexType[@name='TagOperation']">
+			<annox:annotateClass>@javax.xml.bind.annotation.XmlSeeAlso({ReadOperation.class,WriteOperation.class,KillOperation.class,LockOperation.class,RequestOperation.class,CustomOperation.class})</annox:annotateClass>
+			<annox:annotate>
+				<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonTypeInfo" use="NAME" include="PROPERTY" property="kind" />
+				<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes">
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type" value="ReadOperation" name="READ" />
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type" value="WriteOperation" name="WRITE" />
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type" value="KillOperation" name="KILL" />
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type" value="LockOperation" name="LOCK" />
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type" value="RequestOperation" name="REQUEST" />
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type" value="CustomOperation" name="CUSTOM" />
+				</annox:annotate>
+			</annox:annotate>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='ReadOperation']">
+			<annox:annotateClass>@com.fasterxml.jackson.annotation.JsonTypeName("READ")</annox:annotateClass>
+			<hc:constructor default="true">String operationId, short bank, short offset, short length, int password</hc:constructor>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='WriteOperation']">
+			<annox:annotateClass>@com.fasterxml.jackson.annotation.JsonTypeName("WRITE")</annox:annotateClass>
+			<hc:constructor default="true">String operationId, short bank, short offset, byte[] data, int password</hc:constructor>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='KillOperation']">
+			<annox:annotateClass>@com.fasterxml.jackson.annotation.JsonTypeName("KILL")</annox:annotateClass>
+			<hc:constructor default="true">String operationId, int killPassword</hc:constructor>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='LockOperation']">
+			<annox:annotateClass>@com.fasterxml.jackson.annotation.JsonTypeName("LOCK")</annox:annotateClass>
+			<hc:constructor default="true">String operationId, Privilege privilege, Field field, int password</hc:constructor>
+			<bindings node=".//xs:element[@name='privilege']">
+				<bindings node="./xs:simpleType">
+					<typesafeEnumClass name="Privilege" />
+				</bindings>
+			</bindings>
+			<bindings node=".//xs:element[@name='field']">
+				<bindings node="./xs:simpleType">
+					<typesafeEnumClass name="Field" />
+				</bindings>
+			</bindings>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='RequestOperation']">
+			<annox:annotateClass>@com.fasterxml.jackson.annotation.JsonTypeName("REQUEST")</annox:annotateClass>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='CustomOperation']">
+			<annox:annotateClass>@com.fasterxml.jackson.annotation.JsonTypeName("CUSTOM")</annox:annotateClass>
+			<hc:constructor default="true">String operationId, short length, byte[] data, int password</hc:constructor>
+		</bindings>
+
+	</bindings>
+
+</bindings>

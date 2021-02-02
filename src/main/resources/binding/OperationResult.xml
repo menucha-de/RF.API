@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<bindings version="2.1" xmlns="http://java.sun.com/xml/ns/jaxb" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:hi="urn:havis:tools:jaxb:interface" xmlns:hc="urn:havis:tools:jaxb:constructor" xmlns:annox="http://annox.dev.java.net" extensionBindingPrefixes="hi hc annox">
+
+	<bindings schemaLocation="../xsd/OperationResult.xsd">
+
+		<bindings node="/xs:schema/xs:complexType[@name='OperationResult']">
+			<annox:annotateClass>@javax.xml.bind.annotation.XmlSeeAlso({ReadResult.class,WriteResult.class,KillResult.class,LockResult.class,RequestResult.class,CustomResult.class})</annox:annotateClass>
+			<annox:annotate>
+				<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonTypeInfo" use="NAME" include="PROPERTY" property="kind" />
+				<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes">
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type" value="ReadResult" name="READ" />
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type" value="WriteResult" name="WRITE" />
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type" value="KillResult" name="KILL" />
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type" value="LockResult" name="LOCK" />
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type" value="RequestResult" name="REQUEST" />
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type" value="CustomResult" name="CUSTOM" />
+				</annox:annotate>
+			</annox:annotate>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='ReadResult']">
+			<annox:annotateClass>@com.fasterxml.jackson.annotation.JsonTypeName("READ")</annox:annotateClass>
+			<hc:constructor default="true">String operationId, byte[] readData, Result result</hc:constructor>
+			<bindings node=".//xs:element[@name='result']">
+				<bindings node="./xs:simpleType">
+					<typesafeEnumClass name="Result" />
+				</bindings>
+			</bindings>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='WriteResult']">
+			<annox:annotateClass>@com.fasterxml.jackson.annotation.JsonTypeName("WRITE")</annox:annotateClass>
+			<hc:constructor default="true">String operationId, short wordsWritten, Result result</hc:constructor>
+			<bindings node=".//xs:element[@name='result']">
+				<bindings node="./xs:simpleType">
+					<typesafeEnumClass name="Result" />
+				</bindings>
+			</bindings>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='KillResult']">
+			<annox:annotateClass>@com.fasterxml.jackson.annotation.JsonTypeName("KILL")</annox:annotateClass>
+			<hc:constructor default="true">String operationId, Result result</hc:constructor>
+			<bindings node=".//xs:element[@name='result']">
+				<bindings node="./xs:simpleType">
+					<typesafeEnumClass name="Result" />
+				</bindings>
+			</bindings>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='LockResult']">
+			<annox:annotateClass>@com.fasterxml.jackson.annotation.JsonTypeName("LOCK")</annox:annotateClass>
+			<hc:constructor default="true">String operationId, Result result</hc:constructor>
+			<bindings node=".//xs:element[@name='result']">
+				<bindings node="./xs:simpleType">
+					<typesafeEnumClass name="Result" />
+				</bindings>
+			</bindings>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='RequestResult']">
+			<annox:annotateClass>@com.fasterxml.jackson.annotation.JsonTypeName("REQUEST")</annox:annotateClass>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='CustomResult']">
+			<annox:annotateClass>@com.fasterxml.jackson.annotation.JsonTypeName("CUSTOM")</annox:annotateClass>
+			<hc:constructor default="true">String operationId, byte[] resultData, Result result</hc:constructor>
+			<bindings node=".//xs:element[@name='result']">
+				<bindings node="./xs:simpleType">
+					<typesafeEnumClass name="Result" />
+				</bindings>
+			</bindings>
+		</bindings>
+
+	</bindings>
+
+</bindings>

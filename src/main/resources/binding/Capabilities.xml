@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<bindings version="2.1" xmlns="http://java.sun.com/xml/ns/jaxb" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:hi="urn:havis:tools:jaxb:interface" xmlns:hc="urn:havis:tools:jaxb:constructor" xmlns:clone="urn:havis:tools:jaxb:clone" xmlns:annox="http://annox.dev.java.net" xmlns:ci="http://jaxb.dev.java.net/plugin/code-injector" extensionBindingPrefixes="hi hc clone annox ci">
+
+	<bindings schemaLocation="../xsd/Capabilities.xsd">
+
+		<bindings node="/xs:schema/xs:complexType[@name='Capabilities']">
+			<annox:annotateClass>@javax.xml.bind.annotation.XmlSeeAlso({DeviceCapabilities.class,RegulatoryCapabilities.class})</annox:annotateClass>
+			<annox:annotate>
+				<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes">
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type">DeviceCapabilities</annox:annotate>
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type">RegulatoryCapabilities</annox:annotate>
+				</annox:annotate>
+			</annox:annotate>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='DeviceCapabilities']">
+			<clone:clone>receiveSensitivityTable, antennaReceiveSensitivityRangeTable</clone:clone>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='IndexedEntry']">
+			<annox:annotateClass>@javax.xml.bind.annotation.XmlSeeAlso({FreqHopTableEntry.class,TransmitPowerTableEntry.class,ReceiveSensitivityTableEntry.class,AntennaReceiveSensitivityRangeTableEntry.class})</annox:annotateClass>
+			<annox:annotate>
+				<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes">
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type">FreqHopTableEntry</annox:annotate>
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type">TransmitPowerTableEntry</annox:annotate>
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type">ReceiveSensitivityTableEntry</annox:annotate>
+					<annox:annotate annox:class="com.fasterxml.jackson.annotation.JsonSubTypes$Type">AntennaReceiveSensitivityRangeTableEntry</annox:annotate>
+				</annox:annotate>
+			</annox:annotate>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='AntennaReceiveSensitivityRangeTable']">
+			<clone:clone>entryList</clone:clone>
+			<ci:code>public void setEntryList(List&lt;AntennaReceiveSensitivityRangeTableEntry&gt; entryList) { this.entryList = entryList; }</ci:code>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='AntennaReceiveSensitivityRangeTableEntry']">
+			<clone:clone />
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='FixedFreqTable']">
+			<clone:clone />
+			<ci:code>public void setFreqList(List&lt;Integer&gt; freqList) { this.freqList = freqList; }</ci:code>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='FreqHopTable']">
+			<clone:clone>entryList</clone:clone>
+			<ci:code>public void setEntryList(List&lt;FreqHopTableEntry&gt; entryList) { this.entryList = entryList; }</ci:code>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='FreqHopTableEntry']">
+			<clone:clone />
+			<ci:code>public void setFreqList(List&lt;Integer&gt; freqList) { this.freqList = freqList; }</ci:code>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='ReceiveSensitivityTable']">
+			<clone:clone>entryList</clone:clone>
+			<ci:code>public void setEntryList(List&lt;ReceiveSensitivityTableEntry&gt; entryList) { this.entryList = entryList; }</ci:code>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='ReceiveSensitivityTableEntry']">
+			<clone:clone />
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='RegulatoryCapabilities']">
+			<clone:clone>freqHopTable, fixedFreqTable, transmitPowerTable</clone:clone>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='TransmitPowerTable']">
+			<clone:clone>entryList</clone:clone>
+			<ci:code>public void setEntryList(List&lt;TransmitPowerTableEntry&gt; entryList) { this.entryList = entryList; }</ci:code>
+		</bindings>
+
+		<bindings node="/xs:schema/xs:complexType[@name='TransmitPowerTableEntry']">
+			<clone:clone />
+		</bindings>
+	</bindings>
+
+</bindings>
